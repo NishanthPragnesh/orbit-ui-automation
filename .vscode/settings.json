@@ -1,0 +1,10 @@
+{
+  "java.project.sourcePaths": ["src/test/java"],
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "files.exclude": {
+    "**/target/**": false
+  },
+  "search.exclude": {
+    "**/target/**": true
+  }
+}
