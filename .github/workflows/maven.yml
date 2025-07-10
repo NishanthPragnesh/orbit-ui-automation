@@ -1,38 +1,30 @@
-name: Run UI Automation Tests
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout code
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: ☕ Set up JDK 17
+    - name: Set up Java
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
         distribution: 'temurin'
+        java-version: '17'
 
-    - name: 📦 Cache Maven packages
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@v1
+
+    - name: Install Chromedriver
+      uses: nanasess/setup-chromedriver@v2
+
+    - name: Cache Maven packages
       uses: actions/cache@v3
       with:
         path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven
 
-    - name: 🛠️ Build and Test with Maven
+    - name: Build and test with Maven
       run: mvn clean test
-
-    - name: 📤 Upload Cucumber Report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: cucumber-html-report
-        path: target/cucumber-reports/
