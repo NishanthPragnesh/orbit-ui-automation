@@ -17,7 +17,7 @@ Feature: Home Page UI Test
 
   Scenario: Validate price display for the first product
     Given I launch the e-commerce site
-    Then The first product should display the price "₹349"
+    Then The first product should display the price "₹379"
 
   Scenario: Validate footer content
     Given I launch the e-commerce site
