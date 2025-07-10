@@ -2,6 +2,7 @@ package test;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.*;
 import org.testng.Assert;
 import io.cucumber.java.en.*;
@@ -14,11 +15,19 @@ public class IndexSteps {
 
     public static WebDriver driver;
     WebDriverWait wait;
-
+    
     @Given("I launch the e-commerce site")
     public void launchSite() {
         WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless=new"); // ✅ Enable headless mode
+        options.addArguments("--no-sandbox");   // ✅ Required for GitHub Actions
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--user-data-dir=/tmp/chrome-user-data"); // ✅ Fix user-data-dir issue
+
+        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://orbit-automation-test-site.s3-website-us-east-1.amazonaws.com/index.html");
