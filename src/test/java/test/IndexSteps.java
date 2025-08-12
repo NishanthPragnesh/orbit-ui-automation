@@ -15,27 +15,26 @@ public class IndexSteps {
 
     public static WebDriver driver;
     WebDriverWait wait;
-    
+
     @Given("I launch the e-commerce site")
     public void launchSite() {
         WebDriverManager.chromedriver().setup();
+        
+        // ❌ Removed headless mode so you can see browser
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless=new"); // ✅ Enable headless mode
-        options.addArguments("--no-sandbox");   // ✅ Required for GitHub Actions
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-gpu");
         options.addArguments("--remote-allow-origins=*");
-        options.addArguments("--user-data-dir=/tmp/chrome-user-data"); // ✅ Fix user-data-dir issue
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.get("http://orbit-automation-test-site.s3-website-us-east-1.amazonaws.com/index.html");
+
+        // ✅ Your local Orbit e-commerce frontend
+        driver.get("http://127.0.0.1:5500/html-starter/index.html");
     }
 
     @When("I navigate to {string}")
     public void navigateTo(String page) {
-        driver.get("http://orbit-automation-test-site.s3-website-us-east-1.amazonaws.com/" + page);
+        driver.get("http://127.0.0.1:5500/html-starter/" + page);
     }
 
     @Then("The page title should be {string}")
@@ -113,7 +112,6 @@ public class IndexSteps {
             String actualPrice = price.getText().trim();
             if (!actualPrice.equals(expectedPrice)) {
                 ScreenshotUtil.takeScreenshot(driver, "PriceMismatch");
-                System.out.println("❌ Price mismatch: Expected '" + expectedPrice + "', Found '" + actualPrice + "'");
                 Assert.fail("❌ Product price doesn't match. Expected: " + expectedPrice + ", Found: " + actualPrice);
             }
         } catch (Exception e) {
@@ -134,7 +132,6 @@ public class IndexSteps {
         }
     }
 
-    // 🔁 Scroll element to center
     private void scrollToElement(WebElement element) {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({behavior:'instant', block:'center'});", element);
     }
